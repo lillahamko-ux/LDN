@@ -64,6 +64,17 @@ number of times because Framer computes that from measured width at runtime.
   stylesheet too, matching nothing; both are left alone rather than cut out of
   minified output for no gain.
 
+- **Social preview replaced.** `og:image` / `twitter:image` point at
+  `assets/images/og-lisbon-digital-nomads.jpg`, copied in from `brand/og-image.jpg`
+  by the script (it lives outside this folder because `--clean` deletes this one).
+  All social URLs are absolute: Framer writes a relative `og:image`, which scrapers
+  do not reliably resolve.
+- **Canonical address retargeted.** `<link rel="canonical">`, `og:url` and the
+  runtime's `siteCanonicalURL` all named `ldn.framer.website`. This mirror is now
+  the page people are sent to, so they name it instead — otherwise search engines
+  treat the Framer site as the original and this one as a duplicate, and Facebook
+  resolves shares of this domain back to the Framer site's card.
+
 ## Known limits
 
 - This is built output. Editing means editing minified HTML, not the Framer editor —

@@ -200,6 +200,22 @@ def set_og_image(html):
     return html
 
 
+def retarget_domain(text):
+    """Repoint the site's own address at where the mirror actually lives.
+
+    Framer bakes its published hostname into two places that both mean "this
+    site's canonical address": `<link rel="canonical">` in the markup, and
+    `siteCanonicalURL` in the runtime. Left alone they tell Google the Framer
+    site is the authoritative copy of this page, which is wrong once this
+    mirror is the page people are sent to -- it hands the old domain the
+    ranking and makes this one look like a duplicate.
+    """
+    old = SRC.rstrip("/")
+    if old not in text:
+        return text
+    return text.replace(old, SITE)
+
+
 def rewrite(text, depth):
     """Repoint absolute asset URLs at local copies. depth = folders below root."""
     up = "../" * depth
@@ -324,7 +340,8 @@ def main():
                 print(f"  {i}/{len(assets)} ...")
 
     for url, body in modules.items():
-        total += save(local_path(url), rewrite(disable_badge(disable_editor_bar(body)), 2))
+        total += save(local_path(url),
+                      rewrite(retarget_domain(disable_badge(disable_editor_bar(body))), 2))
 
     # ---- page: drop Framer's analytics, editor hooks and badge, then localise URLs
     html = re.sub(r'<script[^>]*events\.framer\.com[^>]*>\s*</script>', '', html)
@@ -340,6 +357,7 @@ def main():
                   r'rel="?(?:preconnect|dns-prefetch)"?[^>]*>', '', html)
     html = remove_badge(html)
     html = set_og_image(html)
+    html = retarget_domain(html)
     total += save("index.html", rewrite(html, 0))
 
     print(f"\ndone -> {OUT}")
