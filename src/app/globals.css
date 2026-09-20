@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafaf8;
+  --foreground: #17171f;
+
+  --color-indigo: #4b4ad5;
+  --color-indigo-deep: #3b3ab6;
+  --color-ink: #17171f;
+  --color-muted: #8a8a93;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body-raw);
+  --font-display: var(--font-display-raw);
+  --font-script: var(--font-script-raw);
+
+  --color-ldn-indigo: var(--color-indigo);
+  --color-ldn-indigo-deep: var(--color-indigo-deep);
+  --color-ldn-ink: var(--color-ink);
+  --color-ldn-muted: var(--color-muted);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body-raw), Arial, Helvetica, sans-serif;
+}
+
+/* Faint decorative flower watermark behind sections */
+.watermark {
+  position: absolute;
+  pointer-events: none;
+  color: #17171f;
+  opacity: 0.03;
+}
+
+/* Hide the default disclosure marker on FAQ items */
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-item summary {
+  list-style: none;
+}
+.faq-item[open] .faq-chevron {
+  transform: rotate(180deg);
+}
