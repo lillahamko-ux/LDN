@@ -40,7 +40,7 @@ Then open http://localhost:3000
 
 Deployed on **Vercel**, from this repository.
 
-Live at https://ldn-red.vercel.app (see Domain below — this is due to change).
+Live at **https://lisbondigitalnomads.vercel.app**
 
 The Vercel project is connected to GitHub, so deploys are automatic:
 
@@ -60,15 +60,13 @@ the normal build.
 
 ## Domain
 
-The site is currently on a default Vercel URL, which should change to something
-that includes **lisbondigitalnomads**. Two ways to do it:
+The site is on the free Vercel subdomain **lisbondigitalnomads.vercel.app**.
 
-- **Free Vercel subdomain** — rename the Vercel project to `lisbondigitalnomads`
-  and the site becomes `lisbondigitalnomads.vercel.app`. Takes a minute, costs
-  nothing.
-- **Custom domain** — buy something like `lisbondigitalnomads.com`, then add it
-  under the project's Domains settings in Vercel and point the registrar's DNS at
-  Vercel. Vercel issues the HTTPS certificate automatically.
+An older auto-generated URL, `ldn-red.vercel.app`, still resolves to the same
+deployment. It can be removed from the project's Domains settings whenever you
+want, or left as-is.
 
-The custom domain is the better long-term answer for a public group; the Vercel
-subdomain is a good stopgap and the two can coexist.
+The natural next step is a custom domain such as `lisbondigitalnomads.com`: buy
+it at a registrar, add it under the project's Domains settings in Vercel, and
+point the registrar's DNS at Vercel. The HTTPS certificate is issued
+automatically. A custom domain and the `.vercel.app` one can coexist.
