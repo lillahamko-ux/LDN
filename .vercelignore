@@ -1,0 +1,6 @@
+# The Framer mirror is a reference snapshot, not part of the deployed app.
+# Excluding it keeps ~80 MB out of every build upload.
+framer-export
+
+# Unrelated client work (also gitignored).
+email
