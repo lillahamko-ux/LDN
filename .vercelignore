@@ -1,6 +1,9 @@
-# The Framer mirror is a reference snapshot, not part of the deployed app.
-# Excluding it keeps ~80 MB out of every build upload.
-framer-export
-
 # Unrelated client work (also gitignored).
 email
+
+# The Next.js rebuild is not what this project deploys yet; the static
+# Framer mirror in framer-export/ is. Keeping src/ and its build inputs
+# out of the upload avoids shipping a second, unused site.
+src
+public
+.next
