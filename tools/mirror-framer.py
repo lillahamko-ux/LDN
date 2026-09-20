@@ -14,6 +14,10 @@ Re-run it any time the Framer site is republished (build hashes change, so pass
 import re, os, sys, shutil, hashlib, urllib.request, urllib.parse, concurrent.futures
 
 SRC = "https://ldn.framer.website/"
+SITE = "https://lisbondigitalnomads.vercel.app"   # where the mirror is hosted
+OG_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "brand", "og-image.jpg")
+OG_REL = "assets/images/og-lisbon-digital-nomads.jpg"
+OG_ALT = "People talking over drinks at a rooftop bar in Lisbon at sunset"
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "framer-export")
 OUT = os.path.normpath(OUT)
 UA  = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
@@ -152,6 +156,48 @@ def disable_badge(body):
         return body
     print("  badge hydration disabled")
     return body[:m.start(1)] + "false" + body[m.end(1):]
+
+
+def set_og_image(html):
+    """Point the social-preview tags at our own image on our own domain.
+
+    Three things are wrong with what Framer publishes, from this mirror's point
+    of view. The image is referenced by a RELATIVE path, which scrapers do not
+    reliably resolve; `og:url` still names the Framer site, and Facebook treats
+    that as the canonical target, so sharing this domain would pull the Framer
+    site's card instead of ours; and the file itself lives under framer-export/,
+    which `--clean` deletes. So the image is kept in brand/ and copied in here,
+    and every URL written below is absolute.
+    """
+    dest = os.path.join(OUT, OG_REL)
+    if not os.path.exists(OG_SRC):
+        print(f"  !! {OG_SRC} missing -- social tags left as Framer published them")
+        return html
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    shutil.copyfile(OG_SRC, dest)
+
+    url = f"{SITE}/{OG_REL}"
+    tags = {
+        'property="og:image"': [
+            f'<meta property="og:image" content="{url}">',
+            f'<meta property="og:image:secure_url" content="{url}">',
+            '<meta property="og:image:type" content="image/jpeg">',
+            '<meta property="og:image:width" content="1200">',
+            '<meta property="og:image:height" content="630">',
+            f'<meta property="og:image:alt" content="{OG_ALT}">'],
+        'name="twitter:image"': [
+            f'<meta name="twitter:image" content="{url}">',
+            f'<meta name="twitter:image:alt" content="{OG_ALT}">'],
+        'property="og:url"': [f'<meta property="og:url" content="{SITE}/">'],
+    }
+    for needle, replacement in tags.items():
+        pattern = re.compile(r"<meta [^>]*" + re.escape(needle) + r"[^>]*>")
+        if not pattern.search(html):
+            print(f"  !! no <meta {needle}> to replace")
+            continue
+        html = pattern.sub("".join(replacement), html, count=1)
+    print(f"  social preview -> {OG_REL}")
+    return html
 
 
 def rewrite(text, depth):
@@ -293,6 +339,7 @@ def main():
     html = re.sub(r'<link[^>]*(?:framerusercontent|fonts\.gstatic|fonts\.googleapis)\.com"?[^>]*'
                   r'rel="?(?:preconnect|dns-prefetch)"?[^>]*>', '', html)
     html = remove_badge(html)
+    html = set_og_image(html)
     total += save("index.html", rewrite(html, 0))
 
     print(f"\ndone -> {OUT}")
